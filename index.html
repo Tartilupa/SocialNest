@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathematicalDB</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 420px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            position: relative;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form {
+            padding: 40px 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        .form h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .form input {
+            width: 100%;
+            padding: 16px 20px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form input:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form input::placeholder {
+            color: #a0aec0;
+            font-weight: 400;
+        }
+
+        /* Remember me checkbox styling */
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            transform: scale(1.2);
+            accent-color: #4facfe;
+        }
+
+        .remember-me label {
+            font-size: 0.9rem;
+            color: #64748b;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .form button {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .form button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .form button:hover::before {
+            left: 100%;
+        }
+
+        .form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+        }
+
+        .form button:active {
+            transform: translateY(0);
+        }
+
+        .switch {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .switch a {
+            color: #4facfe;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .switch a:hover {
+            color: #00f2fe;
+            text-decoration: underline;
+        }
+
+        .terms-text {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.4;
+            margin: 10px 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form-transition {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Loading state for buttons */
+        .loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 480px) {
+            .container {
+                margin: 10px;
+                border-radius: 16px;
+            }
+            
+            .form {
+                padding: 30px 20px;
+            }
+            
+            header {
+                padding: 25px 20px;
+            }
+            
+            header h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Success/Error message styling */
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <form>
+        <div class="container">
+            <header>
+                <h1>Link Nest</h1>
+            </header>
+            <div id="register-form" class="form form-transition">
+                <h2>Create Account</h2>
+                <div class="input-group">
+                    <input type="text" id="reg-fname" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" id="reg-email" placeholder="Email Address" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="reg-username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="reg-password" placeholder="Password" required>
+                </div>
+                <div class="terms-text">
+                    By creating an account, you agree to our <a href="">Terms of Service</a> and <a href="">Privacy Policy</a>.
+                </div>
+                <button type="button" onclick="register()">Create Account</button>
+                <div class="switch">
+                    Already have an account? <a href="#" onclick="showLogin()">Sign In</a>
+                </div>
+            </div>
+            <div id="login-form" class="form hidden">
+                <h2>Welcome Back</h2>
+                <div class="input-group">
+                    <input type="text" id="login-username" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" id="login-password" placeholder="Password" required>
+                </div>
+                <div class="remember-me">
+                    <input type="checkbox" id="remember-me" name="remember-me">
+                    <label for="remember-me">Ostani prijavljen</label>
+                </div>
+                <button type="button" onclick="login()">Sign In</button>
+                <div class="switch">
+                    Don't have an account? <a href="#" onclick="showRegister()">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </form>
+    <script>
+        // Check if user is already logged in when page loads
+        window.addEventListener('load', function() {
+            checkAutoLogin();
+        });
+
+        function checkAutoLogin() {
+            const rememberToken = localStorage.getItem('remember_token');
+            if (rememberToken) {
+                // Verify token with server
+                fetch('./verify_token.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: rememberToken })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        // Token is valid, redirect to dashboard
+                        window.location.href = 'dashboard.php';
+                    } else {
+                        // Token is invalid, remove it
+                        localStorage.removeItem('remember_token');
+                    }
+                })
+                .catch(error => {
+                    console.error('Auto-login check failed:', error);
+                    localStorage.removeItem('remember_token');
+                });
+            }
+        }
+
+        function showLogin() {
+            const registerForm = document.getElementById('register-form');
+            const loginForm = document.getElementById('login-form');
+            
+            registerForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            loginForm.classList.add('form-transition');
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                loginForm.classList.remove('form-transition');
+            }, 400);
+        }
+
+        function showRegister() {
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            registerForm.classList.add('form-transition');
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                registerForm.classList.remove('form-transition');
+            }, 400);
+        }
+
+        function showMessage(message, type = 'error') {
+            // Remove existing messages
+            const existingMessage = document.querySelector('.message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = message;
+            
+            const activeForm = document.querySelector('.form:not(.hidden)');
+            activeForm.insertBefore(messageDiv, activeForm.firstChild);
+            
+            // Auto-remove message after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+
+        async function register() {
+            const button = event.target;
+            const name = document.getElementById('reg-fname').value;
+            const email = document.getElementById('reg-email').value;
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+
+            if (!name || !email || !username || !password) {
+                showMessage('Please fill in all fields for registration.');
+                return;
+            }
+
+            // Add loading state
+            button.classList.add('loading');
+            button.disabled = true;
+
+            try {
+                const response = await fetch('./register.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, username, password })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    setTimeout(() => {
+                        showLogin();
+                    }, 1500);
+                } else {
+                    showMessage(result.message);
+                }
+            } catch (error) {
+                showMessage('An error occurred. Please try again.');
+            } finally {
+                // Remove loading state
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        async function login() {
+            const button = event.target;
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const rememberMe = document.getElementById('remember-me').checked;
+
+            if (!username || !password) {
+                showMessage('Please fill in all fields for login.');
+                return;
+            }
+
+            // Add loading state
+            button.classList.add('loading');
+            button.disabled = true;
+
+            try {
+                const response = await fetch('./login.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, remember_me: rememberMe })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showMessage(result.message, 'success');
+                    
+                    // If remember me is checked and server provided a token, store it
+                    if (rememberMe && result.remember_token) {
+                        localStorage.setItem('remember_token', result.remember_token);
+                    }
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.php';
+                    }, 1000);
+                } else {
+                    showMessage(result.message);
+                }
+            } catch (error) {
+                showMessage('An error occurred. Please try again.');
+            } finally {
+                // Remove loading state
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        // Prevent form submission on Enter key
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const activeForm = document.querySelector('.form:not(.hidden)');
+                const button = activeForm.querySelector('button');
+                button.click();
+            }
+        });
+    </script>
+</body>
+</html>

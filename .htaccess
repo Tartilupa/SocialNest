@@ -1,0 +1,6 @@
+php_value display_errors On
+php_value mbstring.http_input auto
+php_value date.timezone America/New_York
+# Preveri, da omogočaš dostop
+Order Allow,Deny
+Allow from all
