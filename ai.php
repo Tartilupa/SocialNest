@@ -223,7 +223,7 @@ $username = $_SESSION['username']; // Get logged-in username
                 const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                     method: "POST",
                     headers: {
-                        "Authorization": "Bearer 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", // Replace with your API key
+                        "Authorization": "", // Replace with your API key
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
