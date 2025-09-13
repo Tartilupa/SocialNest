@@ -2,7 +2,7 @@
 $host = "localhost"; // MySQL Hostname
 $username = "root"; // Database Username
 $password = ""; // Database Password
-$dbname = "user"; // Database Name
+$dbname = "linknest"; // Database Name
 
 $conn = new mysqli($host, $username, $password, $dbname);
 

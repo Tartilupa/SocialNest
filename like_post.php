@@ -19,7 +19,7 @@ if ($postId <= 0) {
 }
 
 // 1. Check if user already liked the post
-$stmt = $conn->prepare("SELECT 1 FROM post_likes WHERE post_id = ? AND username = ?");
+$stmt = $conn->prepare("SELECT 1 FROM user_likes WHERE post_id = ? AND username = ?");
 $stmt->bind_param("is", $postId, $username);
 $stmt->execute();
 $stmt->store_result();
@@ -31,7 +31,7 @@ if ($stmt->num_rows > 0) {
 $stmt->close();
 
 // 2. Insert into post_likes
-$stmt = $conn->prepare("INSERT INTO post_likes (post_id, username) VALUES (?, ?)");
+$stmt = $conn->prepare("INSERT INTO user_likes (post_id, username) VALUES (?, ?)");
 $stmt->bind_param("is", $postId, $username);
 if (!$stmt->execute()) {
     echo json_encode(["success" => false, "message" => "Error recording like."]);

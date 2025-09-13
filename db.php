@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$dbname = "user";
+$dbname = "linknest";
 $username = "root";
 $password = "";
 $charset = "utf8mb4";
